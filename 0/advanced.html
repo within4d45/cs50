@@ -7,46 +7,40 @@
 </head>
 
 <body>
+
     <div class="header">
         <a href="index.html">Google Search</a>
         <a href="image.html">Image Search</a>
     </div>
-
-    <div class="advanced_search">
-        <h3>Look for pages with...</h3>
-        <table>
-            <tr>
-                <td>all these words:</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            <tr>
-                <td>this exact word or phrase:</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            <tr>
-                <td>any of these words:</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            <tr>
-                <td>none of these words:</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td id="advanced_search_button">
-                    <input type="submit" value="Advanced Search">
-                </td>
-            </tr>
-        </table>
+    <div>
+        <h1>Advanced Search</h1>
     </div>
+    <div>
+        <form action="https://www.google.com/search">
+            <p>
+                <label for="all">all  these words:</label>
+                <input type="text" name="all">
+            </p>
+            <p>
+                <label for="exact">exact word or phrase:</label>
+                <input type="text" name="exact">
+            </p>
+            <p>
+                <label for="any">any of these words:</label>
+                <input type="text" name="any">
+            </p>
+            <p>
+                <label for="all_not">none of these words:</label>
+                <input type="text" name="all_not">
+            </p>
+            <p id="advanced_submit">
+                <label></label>
+                <input type="submit" value="Advanced Search">
+            </p>
+        </form>
+    </div>
+  
 </body>
-
 </html>
+ 
+

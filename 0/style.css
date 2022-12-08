@@ -1,5 +1,7 @@
 div {
-    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 60px;
 }
 
 .header {
@@ -34,12 +36,6 @@ div {
     padding-right: 10px;
 }
 
-td, h3 {
-    font-size:20px;
-    padding-right: 20px;
-    padding-left: 20px;
-    
-}
 
 table input {
     font-size: 30px;
@@ -56,4 +52,43 @@ table input {
     background-color: blue;
     color: white;
     border-radius: 10px;
+}
+
+form  { 
+    display: table;     
+}
+
+form p {
+    display: table-row;
+
+}
+
+form label { 
+    display: table-cell; 
+    font-size: 23px;
+    padding-right:25px;
+}
+
+form input { 
+    display: table-cell;
+    border-color: lightgrey;
+    font-size: 35px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#advanced_submit {
+    text-align: right;
+}
+
+#advanced_submit input {
+    font-size: 17px;
+    font-weight: bold;
+    padding: 10px;
+    padding-right: 40px;
+    padding-left: 40px;
+    background-color: rgb(57,126,236);
+    border: 1px solid rgb(48,121,237);
+    color: white;
+    border-radius: 3px;
 }
