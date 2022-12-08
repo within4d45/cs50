@@ -1,23 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Search</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div class="header">
-            <a href="index.html">Google Search</a>
-            <a href="image.html">Image Search</a>
-        </div>
-        <div class="search">
-            <form action="https://www.google.com/search">
-                <div>
-                    <input type="text" name="q">
-                </div>
-                <div>
+
+<head>
+    <title>Search</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="header">
+        <a href="index.html">Google Search</a>
+        <a href="image.html">Image Search</a>
+    </div>
+
+    <div class="advanced_search">
+        <h3>Look for pages with...</h3>
+        <table>
+            <tr>
+                <td>all these words:</td>
+                <td>
+                    <input type="text">
+                </td>
+            </tr>
+            <tr>
+                <td>this exact word or phrase:</td>
+                <td>
+                    <input type="text">
+                </td>
+            </tr>
+            <tr>
+                <td>any of these words:</td>
+                <td>
+                    <input type="text">
+                </td>
+            </tr>
+            <tr>
+                <td>none of these words:</td>
+                <td>
+                    <input type="text">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td id="advanced_search_button">
                     <input type="submit" value="Advanced Search">
-                </div>
-            </form>
-        </div>
-    </body>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
 </html>
