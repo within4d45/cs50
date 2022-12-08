@@ -1,15 +1,36 @@
+div {
+    padding: 10px;
+}
+
 .header {
-    align-self: right;
+    padding: 10px;
+    text-align: right;
 }
 
-a {
+.header a {
     color: black;
-    background: orange;
+    text-decoration: none;
     padding: 5px;
-    border: 2px solid black;
-    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 15px;
 }
 
-a:hover {
-    background: yellow;
+.header a:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+.search {
+    background-color: yellow;
+    text-align: center;
+    padding-top: 300px;
+}
+
+input {
+    border-radius: 15px;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
