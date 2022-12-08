@@ -36,45 +36,29 @@ div {
     padding-right: 10px;
 }
 
-
-table input {
-    font-size: 30px;
-}
-
-#advanced_search_button {
-    text-align: right;
-}
-
-#advanced_search_button > input {
-    padding: 8px;
-    padding-right: 15px;
-    padding-left: 15px;
-    background-color: blue;
-    color: white;
-    border-radius: 10px;
-}
-
-form  { 
+#advanced_form  { 
     display: table;     
 }
 
-form p {
+#advanced_form p {
     display: table-row;
 
 }
 
-form label { 
+#advanced_form label { 
     display: table-cell; 
-    font-size: 23px;
-    padding-right:25px;
+    font-size: 25px;
+    padding-right: 100px;
 }
 
-form input { 
+.advanced_text { 
     display: table-cell;
     border-color: lightgrey;
-    font-size: 35px;
+    font-size: 25px;
+    padding: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
+    width: 500px;
 }
 
 #advanced_submit {
@@ -87,8 +71,13 @@ form input {
     padding: 10px;
     padding-right: 40px;
     padding-left: 40px;
+    margin-top: 10px;
     background-color: rgb(57,126,236);
     border: 1px solid rgb(48,121,237);
     color: white;
     border-radius: 3px;
+}
+
+#advanced_submit input:hover {
+    background-color: rgb(20, 100, 228);
 }

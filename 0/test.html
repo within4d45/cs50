@@ -7,16 +7,26 @@
 </head>
 
 <body>
-    <div class="header">
-        <a href="image.html">Image Search</a>
-        <a href="advanced.html">Advanced Search</a>
-    </div>
-    <div>
-        <form action="https://www.google.com/search">
-            <input type="text" name="q">
-            <input type="submit" value="Google Search">
-        </form>
-    </div>
+    <h1>Advanced Search</h1>
+    <form>
+        <p>
+            <label for="all">all these words:</label>
+            <input type="text" name="all">
+        </p>
+        <p>
+            <label for="exact">this exact word or phrase:</label>
+            <input type="text" name="exact">
+        </p>
+        <p>
+            <label for="any">any of these words:</label>
+            <input type="text" name="any">
+        </p>
+        <p>
+            <label for="all_not">none of these words:</label>
+            <input type="text" name="all_not">
+        </p>
+    </form>
+
 </body>
 
 </html>
