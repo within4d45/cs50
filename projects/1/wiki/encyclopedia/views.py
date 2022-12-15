@@ -23,7 +23,7 @@ def entry(request, entry):
         })
 
 def search(request):
-    query = request.POST['q']
+    query = request.GET['q']
     return render(request, "encyclopedia/search.html", {
         "query": query
     })
