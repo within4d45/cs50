@@ -12,22 +12,10 @@
         <div class="row">
             <div class="sidebar col-lg-2 col-md-3">
                 <h2>Wiki</h2>
-<<<<<<< HEAD
-                    <form action="{% url 'search' %}" method="post">
-                        {% csrf_token %}
-                        <input class="search" type="text" name="q" placeholder="Search Encyclopedia" list="entries">
-                        <datalist id="entries">
-                            {% for entry in entries %}
-                            <option>{{ entry }}</option>
-                            {% endfor %}
-                        </datalist>
-                    </form>
-=======
                 <form action="{% url 'search' %}", method="get">
                     {% csrf_token %}
                     <input class="search" type="text" name="q" placeholder="Search Encyclopedia">
                 </form>
->>>>>>> d3f0e5695c1f8bb74185705ed261f4a77ed1e25a
                 <div>
                     <a href="{% url 'index' %}">Home</a>
                 </div>
