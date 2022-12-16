@@ -8,11 +8,14 @@
     <h1>Add new entry here</h1>
 
     <form action="{% url 'add' %}" method="post">
-        <p><label for="new_entry">Here you can add a new encyclopedia entry</label></p>
-        <textarea id="new_entry" name="new_entry" rows="4" cols="50">At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.</textarea>
-        <br>
+        {% csrf_token %}
+        <p class="error"> {{ error }}</p>
+        <p><label for="content">Here you can add a new encyclopedia entry in Markdown</label></p>
+        <p>
+            <input type="text" name="title" placeholder="Enter Title" value="{{ title }}">
+            <br><br>
+            <textarea id="content" name="content" placeholder="Enter the markdown content for your new encyclopedia entry here.">{{ content }}</textarea>
+        </p>
         <input type="submit" value="Submit">
     </form>
-
-
 {% endblock %}

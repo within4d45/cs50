@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django import forms
 from django.urls import reverse
 from markdown2 import Markdown
+import random
 
 from . import util
 
@@ -16,15 +17,15 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def entry(request, entry):
-    if util.get_entry(entry) != None:
+def entry(request, title):
+    if util.get_entry(title) != None:
         return render(request, "encyclopedia/entry.html", {
-            "entry_name": entry,
-            "content": markdowner.convert(util.get_entry(entry))
+            "title": title,
+            "content": markdowner.convert(util.get_entry(title))
         })
     else:
         return render(request, "encyclopedia/not_found.html",{
-            "entry_name": entry
+            "title": title
         })
 
 def search(request):
@@ -46,4 +47,54 @@ def search(request):
 
 
 def add(request):
-    return render(request, "encyclopedia/add.html")
+
+    if request.method == "POST":
+        title = request.POST['title']
+        content = request.POST['content']
+
+        if title in util.list_entries(): 
+            return render(request, "encyclopedia/add.html", {
+                "title": title,
+                "content": content,
+                "error": "This entry already exists, edit the existing entry or create change the title."
+            })
+
+        elif title == "" or content == "":
+            return render(request, "encyclopedia/add.html", {
+                "title": title,
+                "content": content,
+                "error": "Title and content field have to be filled."
+            })
+        else:
+            util.save_entry(title, content)
+            return HttpResponseRedirect(reverse('entry', args=[title]))
+        
+    else:
+        return render(request, "encyclopedia/add.html", {
+            "title": "",
+            "content": "",
+            "error": ""
+        })
+
+def edit(request, title):
+
+    if request.method == "POST":
+        content = request.POST['content']
+        util.save_entry(title, content)
+        return HttpResponseRedirect(reverse('entry', args=[title]))
+
+    else:
+        content = util.get_entry(title)
+        if content != None:
+            return render(request, "encyclopedia/edit.html", {
+                "title": title,
+                "content": content
+            })
+
+        else:
+            return render(request, "encyclopedia/not_found.html",{
+                "title": title
+            })
+
+def random_entry(request):
+    return entry(request,random.choice(util.list_entries()))

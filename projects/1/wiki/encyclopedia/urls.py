@@ -4,7 +4,9 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("entry/<str:entry>", views.entry, name="entry"),
+    path("entry/<str:title>", views.entry, name="entry"),
     path("search", views.search, name="search"),
-    path("add", views.add, name="add")
+    path("add", views.add, name="add"),
+    path("edit/<str:title>", views.edit, name="edit"),
+    path("random", views.random_entry, name="random")
 ]
