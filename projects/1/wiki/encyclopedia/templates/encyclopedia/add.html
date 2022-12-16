@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Add Encyclopedia Entry
+{% endblock %}
+
+{% block body %}
+    <h1>Add new entry here</h1>
+
+    <form action="{% url 'add' %}" method="post">
+        <p><label for="new_entry">Here you can add a new encyclopedia entry</label></p>
+        <textarea id="new_entry" name="new_entry" rows="4" cols="50">At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.</textarea>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+
+{% endblock %}
