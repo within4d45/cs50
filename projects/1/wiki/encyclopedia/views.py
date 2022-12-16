@@ -2,11 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django import forms
 from django.urls import reverse
+from markdown2 import Markdown
 
 from . import util
 
 class SearchForm(forms.Form):
     entry = forms.CharField()
+
+markdowner = Markdown()
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -16,7 +19,8 @@ def index(request):
 def entry(request, entry):
     if util.get_entry(entry) != None:
         return render(request, "encyclopedia/entry.html", {
-            "entry_name": entry
+            "entry_name": entry,
+            "content": markdowner.convert(util.get_entry(entry))
         })
     else:
         return render(request, "encyclopedia/not_found.html",{
@@ -41,3 +45,5 @@ def search(request):
     
 
 
+def add(request):
+    return render(request, "encyclopedia/add.html")
