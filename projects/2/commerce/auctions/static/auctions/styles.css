@@ -1,0 +1,16 @@
+body {
+    padding: 10px;
+}
+
+
+.auction {
+    border: 2px solid black;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color:bisque
+
+}
+
+#error {
+    color: red;
+}

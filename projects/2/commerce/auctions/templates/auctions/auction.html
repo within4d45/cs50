@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>{{ auction.title }}</h1>
+    <a>These people have bid on this piece:</a>
+    <ul>
+        {% for bid in bids %}
+        <li> {{ bid }} by {{ bid.user }} </li> 
+        {% endfor %}
+    </ul>
+
+    <h2>Comments</h2>
+
+    {% for comment in comments %}
+    <p>
+        <b>{{ comment.user }} commented:</b>
+        <br>
+        {{ comment }}
+    </p>
+    {% empty %}
+    <li>No comments, yet. Be the first one</li>
+    {% endfor %}
+
+{% endblock %}
