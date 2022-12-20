@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <h2>My watchlist</h2>
+        <hr>
+        {% for auction in auctions %}
+        <div class="auction">
+            <p><a href="{% url 'auction' auction.id %}">{{ auction }}</a></p>
+            <p>
+                {% if auction.picture_url != "" %}
+                <img src= "{{ auction.picture_url }}" width="600">
+                {% endif %}
+            </p>
+            <p>Description: {{ auction.description }}</p>
+            <p>Current price: {{ auction.price }}$</p>
+            <p>
+                <form action="{% url 'edit_watchlist' auction.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="True">
+                    <input type="submit" value="Delete From Watchlist">
+                </form>
+            </p>
+        </div>
+        {% empty %}
+        <h3>No item on watchlist</h3>
+        {% endfor %}
+    {% else %}
+        <h2>Log in to see your watchlist</h2>
+    {% endif %}
+{% endblock %}

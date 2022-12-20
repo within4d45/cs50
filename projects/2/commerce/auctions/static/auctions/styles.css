@@ -2,6 +2,9 @@ body {
     padding: 10px;
 }
 
+div {
+    padding-bottom: 20px;
+}
 
 .auction {
     border: 2px solid black;
@@ -13,4 +16,20 @@ body {
 
 #error {
     color: red;
+}
+
+#message {
+    color: green;
+}
+
+#submit_comment {
+    width: 300px;
+}
+
+#you_won {
+    color: green;
+}
+
+h1 {
+    background-color: bisque;
 }

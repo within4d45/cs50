@@ -2,23 +2,122 @@
 
 {% block body %}
     <h1>{{ auction.title }}</h1>
-    <a>These people have bid on this piece:</a>
-    <ul>
+
+    {% if message %}
+    <div id="message">
+        {{ message }}
+    </div>
+    {% elif error %}
+    <div id="error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div id="picture">
+        <img src="{{ auction.picture_url }}" width="600px">
+    </div>
+
+    <div id="bids">
+        <h3>Bids on this auction</h3>
         {% for bid in bids %}
         <li> {{ bid }} by {{ bid.user }} </li> 
+        {% empty %}
+        <p><b>No bids, yet.</b></p>
         {% endfor %}
-    </ul>
 
-    <h2>Comments</h2>
+        {% if auction.active %}
+            <p><b>Auction is Active</b></p>
+            <p><b>Current highest bid: {{ auction.price }}$</b></p>
+        {% else %}
+            <p color="red"><b>Auction is over. The final price is {{ auction.price }}$</b></p>
+        {% endif %}
+    </div>
 
-    {% for comment in comments %}
-    <p>
-        <b>{{ comment.user }} commented:</b>
-        <br>
-        {{ comment }}
-    </p>
-    {% empty %}
-    <li>No comments, yet. Be the first one</li>
-    {% endfor %}
+    <div id="comments">
+        <h3>Comments</h3>
+        {% for comment in comments %}
+        <p>
+            <b>{{ comment.user }} commented:</b><br>
+            {{ comment }}
+        </p>
+        {% empty %}
+        <p><b>No comments, yet.</b></p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+        <!-- USER SECTION BEGINS -->
+        <div id="user_section">
+
+            <!-- Add or remove item from watchlist -->
+            <div>
+                <form action="{% url 'edit_watchlist' auction.pk %}" method="post">
+                    {% csrf_token %}
+                    {% if auction_in_watchlist %}
+                        <input type="hidden" name="delete" value="True">
+                        <input type="submit" value="Delete From Watchlist">
+                    {% else %}
+                        <input type="hidden" name="delete" value="False">
+                        <input type="submit" value="Add to watchlist">
+                    {% endif %}
+                </form>
+            </div>
+
+
+            <!-- Place bid -->
+            {% if auction.active %}
+                <div id="place_bid">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form_bid }}
+                        <input type="submit" value="Submit Bid">
+                    </form>
+                </div>
+            {% endif %}
+
+            <!-- Close auction -->
+            {% if auction.user == request.user and auction.active %}
+                <div id="close_auction">
+                    <form action="{% url 'close_auction' auction.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Close this auction">
+                    </form>
+                </div>
+            {% endif %}
+
+            <!-- Submit comment -->
+            <div id="submit_comment">
+                <form action="{% url 'submit_comment' auction.pk %}" method="post">
+                    {% csrf_token %}
+                    {{ form_comment.as_p }}
+                    <input type="submit" value="Post Comment">
+                </form>
+            </div>
+
+            <!-- Show highest bidder message -->
+            {% if any_bids %}
+                {% if bids.last.user == request.user %}
+                    {% if auction.active %}
+                    <div id = "highest_bidder">
+                        <p><b>You are the highest bidder!</b></p>
+                    </div>
+                    {% else %}
+                    <div id = "auction_won">
+                        <h2 id="you_won">You have won the auction, congratulations!</p>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                {% else %}
+                    <div id="no_bids">
+                        <p><b>No bids, yet.</b></p>
+                    </div>
+            {% endif %}
+
+
+        </div>
+
+    {% elif not user.is_authenticated %}
+        <h3>Log in to access user area</h3>
+    {% endif %}
 
 {% endblock %}
