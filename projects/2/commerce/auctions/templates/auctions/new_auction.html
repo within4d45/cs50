@@ -1,18 +1,18 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>Create a new auction</h1>
-    {% if message %}
-    <p id="error">{{ message }}</p>
-    {% endif %}
-
-    <form action="{% url 'new_auction' %}" method="post">
-        {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
-        <input type="submit" value="Create new Auction">
-    </form>
-
-    <p>This is a test value: {{ test }}</p>
+    <div class="wrapper new-auction-wrapper">
+        <h1>Create a new auction</h1>
+        
+        <div class="new-auction">
+            {% if message %}
+                <p id="error">{{ message }}</p>
+            {% endif %}
+            <form class="form new-auction-form" action="{% url 'new_auction' %}" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input class="form-input button" type="submit" value="Create Auction">
+            </form>
+        </div>
+    </div>
 {% endblock %}

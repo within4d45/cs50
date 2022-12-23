@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-
+from . import util
 from .models import User, Auction, Bid, Comment, WatchList
 
 """
@@ -18,22 +18,26 @@ To do:
 [] Change minimum bid or price when auction is created first
 [] The bid logic in the auction site view is pretty weird
     [] How do you go about creating logic in a different place but sending messages over to be displayed in the rendered form?
+[] fine tune error handling when auction is created
 [] having the bidding logic within the auction view is probably not best practice
-[] overlooking the url logic on the other pages
-[] figure out if through that people can just insert stuff
+[] make it so the user that has created the auction must not bid
+[] handle letter overflow
+
+[-] overlooking the url logic on the other pages
+[-] figure out if through that people can just insert stuff
  
 Questions:
-[] If people manage to add bids without the interface, the price of the piece will not get updated
-  [] If people manage to add a bid under the current highest bid, the Bid.objects.all().last() will not give out the highest
+[-] If people manage to add bids without the interface, the price of the piece will not get updated
+  [-] If people manage to add a bid under the current highest bid, the Bid.objects.all().last() will not give out the highest
 
 """
 
 class NewAuctionForm(forms.Form):
-    title = forms.CharField(label="Auction Title", max_length=64)
-    description = forms.CharField(label="Description", max_length=256)
-    starting_price = forms.IntegerField(label="Starting bid")
+    title = forms.CharField(label="", max_length=32, widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Title'}))
+    description = forms.CharField(label="", max_length=256,widget=forms.Textarea(attrs={'class':'form-input textarea', 'rows':'4', 'placeholder':'Description'}))
+    starting_price = forms.IntegerField(label="", widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Starting Price'}))
     picture_url = forms.CharField(
-        label="Picture URL (optional)", max_length=256, required=False
+        label="", max_length=256, required=False, widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Image URL (optional)'})
     )
 
 
@@ -51,7 +55,7 @@ class NewCommentForm(forms.Form):
 def index(request):
     auctions = Auction.objects.filter(active=True)
     return render(request, "auctions/index.html", {
-        "auctions": auctions
+        "auctions": auctions,
         })
 
 
@@ -115,6 +119,7 @@ def register(request):
 
 def auction(request, auction_id):
 
+
     auction = Auction.objects.get(pk=auction_id)
     any_bids = auction.bids.filter().exists()
     watchlist = request.user.watchlist
@@ -126,13 +131,13 @@ def auction(request, auction_id):
         form_bid = NewBidForm(request.POST)
         if form_bid.is_valid():
             bid = int(form_bid.cleaned_data['bid'])
-        if bid <= auction.price:
+        if bid < auction.price:
             error = "Place a bid higher than the current price"
         else:
             message = "Bid succesfully received"
             new_bid = Bid(amount=bid, auction = auction, user = request.user)
             new_bid.save()
-            auction.price = bid
+            auction.price = bid+1
             auction.save()
 
         return render(request, "auctions/auction.html",{
@@ -171,7 +176,6 @@ def new_auction(request):
     """
     if request.method == "POST":
         form = NewAuctionForm(request.POST)
-
         if (form.is_valid() and not Auction.objects.filter(title=form.cleaned_data["title"]).exists()):
             auction = Auction(
                 title=form.cleaned_data["title"],

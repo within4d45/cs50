@@ -1,30 +1,28 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="wrapper register-wrapper">
 
-    <h2>Register</h2>
+        <h2>Register</h2>
 
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
+        <div class="register">
+            {% if message %}
+                <div>{{ message }}</div>
+            {% endif %}
+            <form class="form registration-form" action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <input class="form-input text" autofocus type="text" name="username" placeholder="Username">
+                <input class="form-input text" type="email" name="email" placeholder="Email Address">
+                <input class="form-input text" type="password" name="password" placeholder="Password">
+                <input class="form-input text" type="password" name="confirmation" placeholder="Confirm Password">
+                <div class="form-flex">
+                    <input class="form-input button" type="submit" value="Register">
+                    <div>Already have an account? <a href="{% url 'login' %}">Log In here.</a></div>
+                </div>
 
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+            </form>
         </div>
-        <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Register">
-    </form>
+    </div>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
 
 {% endblock %}

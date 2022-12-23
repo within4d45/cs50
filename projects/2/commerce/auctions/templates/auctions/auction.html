@@ -4,20 +4,20 @@
     <h1>{{ auction.title }}</h1>
 
     {% if message %}
-    <div id="message">
+    <div class="message">
         {{ message }}
     </div>
     {% elif error %}
-    <div id="error">
+    <div class="error">
         {{ error }}
     </div>
     {% endif %}
 
-    <div id="picture">
+    <div class="image">
         <img src="{{ auction.picture_url }}" width="600px">
     </div>
 
-    <div id="bids">
+    <div class="bids">
         <h3>Bids on this auction</h3>
         {% for bid in bids %}
         <li> {{ bid }} by {{ bid.user }} </li> 
@@ -27,13 +27,13 @@
 
         {% if auction.active %}
             <p><b>Auction is Active</b></p>
-            <p><b>Current highest bid: {{ auction.price }}$</b></p>
+            <p><b>Current minimum bid: {{ auction.price }}$</b></p>
         {% else %}
-            <p color="red"><b>Auction is over. The final price is {{ auction.price }}$</b></p>
+            <p><b>Auction is over. The final price is {{ auction.price }}$</b></p>
         {% endif %}
     </div>
 
-    <div id="comments">
+    <div class="comments">
         <h3>Comments</h3>
         {% for comment in comments %}
         <p>
@@ -47,10 +47,40 @@
 
     {% if user.is_authenticated %}
         <!-- USER SECTION BEGINS -->
-        <div id="user_section">
+        <div class="user_section">
+            <!-- Bidding -->
+            <div class="bidding">
+                {% if auction.active %}
+                    <div class="place_bid">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form_bid }}
+                            <input type="submit" value="Submit Bid">
+                        </form>
+                    </div>
+                {% endif %}
+            <!-- Show highest bidder message -->
+                {% if any_bids %}
+                    {% if bids.last.user == request.user %}
+                        {% if auction.active %}
+                        <div class = "highest_bidder">
+                            <p><b>You are the highest bidder!</b></p>
+                        </div>
+                        {% else %}
+                        <div class = "auction_won">
+                            <h2 id="you_won">You have won the auction, congratulations!</p>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                    {% else %}
+                        <div class="no_bids">
+                            <p><b>No bids, yet.</b></p>
+                        </div>
+                {% endif %}
+            </div>
 
             <!-- Add or remove item from watchlist -->
-            <div>
+            <div class="watchlist_buttons">
                 <form action="{% url 'edit_watchlist' auction.pk %}" method="post">
                     {% csrf_token %}
                     {% if auction_in_watchlist %}
@@ -64,20 +94,9 @@
             </div>
 
 
-            <!-- Place bid -->
-            {% if auction.active %}
-                <div id="place_bid">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form_bid }}
-                        <input type="submit" value="Submit Bid">
-                    </form>
-                </div>
-            {% endif %}
-
             <!-- Close auction -->
             {% if auction.user == request.user and auction.active %}
-                <div id="close_auction">
+                <div class="close_auction">
                     <form action="{% url 'close_auction' auction.pk %}" method="post">
                         {% csrf_token %}
                         <input type="submit" value="Close this auction">
@@ -86,33 +105,13 @@
             {% endif %}
 
             <!-- Submit comment -->
-            <div id="submit_comment">
+            <div class="submit_comment">
                 <form action="{% url 'submit_comment' auction.pk %}" method="post">
                     {% csrf_token %}
                     {{ form_comment.as_p }}
                     <input type="submit" value="Post Comment">
                 </form>
             </div>
-
-            <!-- Show highest bidder message -->
-            {% if any_bids %}
-                {% if bids.last.user == request.user %}
-                    {% if auction.active %}
-                    <div id = "highest_bidder">
-                        <p><b>You are the highest bidder!</b></p>
-                    </div>
-                    {% else %}
-                    <div id = "auction_won">
-                        <h2 id="you_won">You have won the auction, congratulations!</p>
-                    </div>
-                    {% endif %}
-                {% endif %}
-                {% else %}
-                    <div id="no_bids">
-                        <p><b>No bids, yet.</b></p>
-                    </div>
-            {% endif %}
-
 
         </div>
 
