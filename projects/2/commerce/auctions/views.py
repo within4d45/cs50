@@ -7,7 +7,7 @@ from django.urls import reverse
 from django import forms
 
 from . import util
-from .models import User, Auction, Bid, Comment, WatchList
+from .models import User, Auction, Bid, Comment, WatchList, Category
 
 """
 To do:
@@ -36,20 +36,25 @@ class NewAuctionForm(forms.Form):
     title = forms.CharField(label="", max_length=32, widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Title'}))
     description = forms.CharField(label="", max_length=256,widget=forms.Textarea(attrs={'class':'form-input textarea', 'rows':'4', 'placeholder':'Description'}))
     starting_price = forms.IntegerField(label="", widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Starting Price'}))
+    category = forms.ChoiceField(
+        label="Choose Category",
+        choices=enumerate(list(Category.objects.all())),
+        widget=forms.Select(attrs={'class':'form-input'})
+        )
     picture_url = forms.CharField(
         label="", max_length=256, required=False, widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Image URL (optional)'})
     )
 
 
 class NewBidForm(forms.Form):
-    bid = forms.IntegerField(label="Place your bid")
+    bid = forms.IntegerField(
+        label="Place your bid",
+        widget=forms.NumberInput(attrs={'class':'bid-input'})
+        )
 
 
 class NewCommentForm(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea(attrs={
-        'placeholder':"Enter comment here",
-        'style':'width: 100%; height: 150px;'
-    }))
+    comment = forms.CharField(label="", max_length=256,widget=forms.Textarea(attrs={'class':'form-input textarea', 'rows':'4', 'placeholder':'Enter comment here'}))
 
 
 def index(request):
@@ -119,13 +124,18 @@ def register(request):
 
 def auction(request, auction_id):
 
-
     auction = Auction.objects.get(pk=auction_id)
     any_bids = auction.bids.filter().exists()
-    watchlist = request.user.watchlist
-    auction_in_watchlist = watchlist.auction.filter(pk=auction.pk).exists()
     message = ""
     error = ""
+
+    if request.user.is_authenticated:
+        watchlist = request.user.watchlist
+        auction_in_watchlist = watchlist.auction.filter(pk=auction.pk).exists()
+    
+    else:
+        watchlist = ""
+        auction_in_watchlist = ""
 
     if request.method == "POST":
         form_bid = NewBidForm(request.POST)
@@ -176,21 +186,35 @@ def new_auction(request):
     """
     if request.method == "POST":
         form = NewAuctionForm(request.POST)
-        if (form.is_valid() and not Auction.objects.filter(title=form.cleaned_data["title"]).exists()):
-            auction = Auction(
-                title=form.cleaned_data["title"],
-                description=form.cleaned_data["description"],
-                picture_url=form.cleaned_data["picture_url"],
-                price=form.cleaned_data["starting_price"],
-                user=request.user,
-            )
-            auction.save()
-
-        else:
+        
+        if not (form.is_valid()):
             return render(request, "auctions/new_auction.html",{
-                    "message": "An auction with that title already exists. Please choose a different one.",
-                    "form": NewAuctionForm(),
-                })
+                "message": "Form is not valid",
+                "form": NewAuctionForm(),
+            })
+
+        if Auction.objects.filter(title=form.cleaned_data["title"]).exists():
+            return render(request, "auctions/new_auction.html",{
+                "message": "An auction with that title already exists. Please choose a different one.",
+                "form": NewAuctionForm(),
+            })
+
+        picture_url = form.cleaned_data["picture_url"]
+
+        if picture_url == "":
+            picture_url = "https://picsum.photos/id/119/300/200"
+
+        auction = Auction(
+            title=form.cleaned_data["title"],
+            description=form.cleaned_data["description"],
+            picture_url=picture_url,
+            price=form.cleaned_data["starting_price"],
+            category = Category.objects.get(pk=form.cleaned_data["category"]),
+            user=request.user,
+        )
+        auction.save()
+
+        return HttpResponseRedirect(reverse('auction', args=[auction.pk]))
 
     return render(request, "auctions/new_auction.html", {
         "form": NewAuctionForm()

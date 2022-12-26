@@ -4,6 +4,12 @@ from django.db import models
 class User(AbstractUser):  
     pass
 
+class Category(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.name
+
 class Auction(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=256)
@@ -11,6 +17,7 @@ class Auction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auctions")
     price = models.IntegerField()
     active = models.BooleanField(default=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="auctions")
 
     def __str__(self):
         return f"{self.title} by {self.user}"
@@ -38,3 +45,4 @@ class WatchList(models.Model):
 
     def __str__(self):
         return f"{self.user}'s watchlist"
+

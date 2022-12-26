@@ -5,11 +5,16 @@
 body {
     background-color: rgb(30, 30, 30);
     color: rgba(204, 204, 204, 0.673);
+    font-size: 20px;
+}
+
+div {
+    margin-bottom: 15px;
 }
 
 
 h1, h2, h3 {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .wrapper {
@@ -103,6 +108,104 @@ h1, h2, h3 {
     margin-bottom: 20px;
 }
 
+.auction {
+    width: 90%;
+    max-width: 960px;
+}
+
+.auction-image {
+ margin-bottom: 10px;
+}
+
+.auction .bids {
+    margin-bottom: 30px;
+}
+
+.auction .auction-active{
+    color: green;
+}
+
+.auction .highest-bidder, .auction .winner {
+    color: green;
+    font-weight: 700;
+}
+
+.auction .winner {
+    font-size: 28px;
+}
+
+.auction .button {
+    margin-bottom: 5px;
+}
+
+.error, .message {
+    align-self: flex-start;
+}
+
+.error {
+    color: red;
+}
+
+.message {
+    color: green;
+}
+
+.submit_comment {
+    max-width: 500px;
+}
+
+.you_won {
+    color: green;
+}
+
+.bid-input {
+ margin: 0px 10px;
+}
+
+
+.auctions {
+    height: 200px;
+    width: 200px;
+    text-decoration: none;
+    background-color: rgb(50, 50, 50);
+    border-radius: 20px 20px 5px 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out;
+}
+
+.auctions:hover {
+    transform: scale(1.2);
+}
+
+.auctions-image {
+    display: flex;
+    flex: 0 0 80%;
+    overflow: hidden;
+    margin: 0px;
+
+}
+
+.auctions-image img {
+    object-fit: cover;
+}
+
+.auctions-info {
+    display: flex;
+    margin: 0px;
+    flex: 0 0 20%;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;   
+    text-decoration: none;
+}
+
+.auctions-info div {
+    margin: 0;
+}
+
 .hstack {
     flex: 1;
     width: 960px;
@@ -157,20 +260,4 @@ a.title:hover {
 
 .description {
     font-size: 16px;
-}
-
-.error {
-    color: red;
-}
-
-.message {
-    color: green;
-}
-
-.submit_comment {
-    width: 300px;
-}
-
-.you_won {
-    color: green;
 }

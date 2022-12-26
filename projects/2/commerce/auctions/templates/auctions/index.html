@@ -6,11 +6,7 @@
             <h2>Active Listings</h2>
             {% for auction in auctions %}
                 <div class="hstack">
-                    {% if auction.picture_url != "" %}
-                        <img class="auction-preview-image" src= "{{ auction.picture_url }}">
-                    {% else %}
-                        <img class="auction-preview-image" src="https://picsum.photos/id/119/300/200">
-                    {% endif %}
+                    <img class="auction-preview-image" src="{{ auction.picture_url }}">
                     <div class="vstack">
                         <a class="container-item title" href="{% url 'auction' auction.id %}">{{ auction }}</a>
                         <div class="container-item description">Description: {{ auction.description| truncatechars:100 }}</div>
@@ -18,7 +14,23 @@
                     </div>
                 </div>
             {% empty %}
-            <h3>No active listings</h3>
+            {% endfor %}
+        </div>
+
+        <div class="wrapper auctions-wrapper">
+            <h2>Active Listings</h2>
+
+            {% for auction in auctions %}
+                <a class="auctions" href="{% url 'auction' auction.pk %}">
+                    <div class="auctions-image">
+                        <img src="{{ auction.picture_url }}">
+                    </div>
+                    <div class="auctions-info">
+                        <div>{{ auction.title }}</div>
+                    </div>
+                </a>
+            {% empty %}
+                <h3>No active listings</h3>
             {% endfor %}
         </div>
 {% endblock %}

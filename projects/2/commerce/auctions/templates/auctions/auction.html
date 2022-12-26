@@ -1,122 +1,119 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>{{ auction.title }}</h1>
+    <div class="wrapper auction-wrapper">
+        <h1>{{ auction.title }}</h1>
+        <div class="auction">
 
-    {% if message %}
-    <div class="message">
-        {{ message }}
-    </div>
-    {% elif error %}
-    <div class="error">
-        {{ error }}
-    </div>
-    {% endif %}
-
-    <div class="image">
-        <img src="{{ auction.picture_url }}" width="600px">
-    </div>
-
-    <div class="bids">
-        <h3>Bids on this auction</h3>
-        {% for bid in bids %}
-        <li> {{ bid }} by {{ bid.user }} </li> 
-        {% empty %}
-        <p><b>No bids, yet.</b></p>
-        {% endfor %}
-
-        {% if auction.active %}
-            <p><b>Auction is Active</b></p>
-            <p><b>Current minimum bid: {{ auction.price }}$</b></p>
-        {% else %}
-            <p><b>Auction is over. The final price is {{ auction.price }}$</b></p>
-        {% endif %}
-    </div>
-
-    <div class="comments">
-        <h3>Comments</h3>
-        {% for comment in comments %}
-        <p>
-            <b>{{ comment.user }} commented:</b><br>
-            {{ comment }}
-        </p>
-        {% empty %}
-        <p><b>No comments, yet.</b></p>
-        {% endfor %}
-    </div>
-
-    {% if user.is_authenticated %}
-        <!-- USER SECTION BEGINS -->
-        <div class="user_section">
-            <!-- Bidding -->
-            <div class="bidding">
+            {% if message %}
+            <div class="message">
+                {{ message }}
+            </div>
+            {% elif error %}
+            <div class="error">
+                {{ error }}
+            </div>
+            {% endif %}
+        
+            <div class="auction-image">
+                <img src="{{ auction.picture_url }}">
+            </div>
+        
+            <div class="bids">
                 {% if auction.active %}
-                    <div class="place_bid">
-                        <form method="post">
+                    <div class="auction-active">
+                        <b>Auction is Active</b>
+                    </div>
+
+                    {% if bids %}
+                        {% if request.user == bids.last.user %}
+                            <div class="highest-bidder">You are the highest bidder!</div>
+                        {% else %}
+                            <div>Current highest bid by: {{ bids.last.user }}</div>
+                        {% endif %}
+                    {% else %}
+                        <div>No bids, yet.</div>
+                    {% endif %}
+
+                    <div><b>Current minimum bid: {{ auction.price }}$</b></div>
+                    {% if user.is_authenticated %}
+                        <div class="place_bid">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form_bid }}
+                                <input class="form-input button" type="submit" value="Submit">
+                            </form>
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <div><b>Auction is over. The final price is {{ auction.price }}$</b></div>
+                    {% if request.user == bids.last.user %}
+                        <div class="winner">You have won the auction. Congratulations!</div>
+                    {% endif %}
+                {% endif %}
+                
+
+            </div>
+        
+            <div class="comments">
+                <h3>Comment section</h3>
+                {% for comment in comments %}
+                    <div class="comment">
+                        <b>{{ comment.user }} commented:</b><br>
+                        {{ comment }}
+
+                        {% empty %}
+                        <b>No comments, yet. Be the first one!</b>
+                    </div>
+                {% endfor %}
+            
+                {% if user.is_authenticated %}
+                    <!-- Submit comment -->
+                    <div class="submit_comment">
+                        <form action="{% url 'submit_comment' auction.pk %}" method="post">
                             {% csrf_token %}
-                            {{ form_bid }}
-                            <input type="submit" value="Submit Bid">
+                            {{ form_comment }}
+                            <input class="form-input button" type="submit" value="Post Comment">
                         </form>
                     </div>
-                {% endif %}
-            <!-- Show highest bidder message -->
-                {% if any_bids %}
-                    {% if bids.last.user == request.user %}
-                        {% if auction.active %}
-                        <div class = "highest_bidder">
-                            <p><b>You are the highest bidder!</b></p>
+        
+
+                <div class="other-options">       
+                    <!-- Add or remove item from watchlist -->
+                    {% if auction.active and user != auction.user %}
+                        <div class="watchlist">
+                            <form action="{% url 'edit_watchlist' auction.pk %}" method="post">
+                                {% csrf_token %}
+                                {% if auction_in_watchlist %}
+                                    <input type="hidden" name="delete" value="True">
+                                    <input class="form-input button" type="submit" value="Delete From Watchlist">
+                                {% else %}
+                                    <input type="hidden" name="delete" value="False">
+                                    <input class="form-input button" type="submit" value="Add to watchlist">
+                                {% endif %}
+                            </form>
                         </div>
-                        {% else %}
-                        <div class = "auction_won">
-                            <h2 id="you_won">You have won the auction, congratulations!</p>
-                        </div>
-                        {% endif %}
                     {% endif %}
-                    {% else %}
-                        <div class="no_bids">
-                            <p><b>No bids, yet.</b></p>
+        
+        
+                    <!-- Close auction -->
+                    {% if auction.user == request.user and auction.active %}
+                        <div class="close_auction">
+                            <form action="{% url 'close_auction' auction.pk %}" method="post">
+                                {% csrf_token %}
+                                <input class="form-input button" type="submit" value="Close this auction">
+                            </form>
                         </div>
-                {% endif %}
-            </div>
-
-            <!-- Add or remove item from watchlist -->
-            <div class="watchlist_buttons">
-                <form action="{% url 'edit_watchlist' auction.pk %}" method="post">
-                    {% csrf_token %}
-                    {% if auction_in_watchlist %}
-                        <input type="hidden" name="delete" value="True">
-                        <input type="submit" value="Delete From Watchlist">
-                    {% else %}
-                        <input type="hidden" name="delete" value="False">
-                        <input type="submit" value="Add to watchlist">
                     {% endif %}
-                </form>
-            </div>
-
-
-            <!-- Close auction -->
-            {% if auction.user == request.user and auction.active %}
-                <div class="close_auction">
-                    <form action="{% url 'close_auction' auction.pk %}" method="post">
-                        {% csrf_token %}
-                        <input type="submit" value="Close this auction">
-                    </form>
                 </div>
+        
+            {% elif not user.is_authenticated %}
+                <h3>Log in to access user area</h3>
             {% endif %}
-
-            <!-- Submit comment -->
-            <div class="submit_comment">
-                <form action="{% url 'submit_comment' auction.pk %}" method="post">
-                    {% csrf_token %}
-                    {{ form_comment.as_p }}
-                    <input type="submit" value="Post Comment">
-                </form>
-            </div>
-
         </div>
 
-    {% elif not user.is_authenticated %}
-        <h3>Log in to access user area</h3>
-    {% endif %}
+    </div>
+    
 
 {% endblock %}
