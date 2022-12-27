@@ -10,26 +10,42 @@ from . import util
 from .models import User, Auction, Bid, Comment, WatchList, Category
 
 """
-To do:
-[x] Change price to current bit in index view
-[x] Have a highest bid + starting price field in Auction instead of price
-[] Change bid view when there have not been any bids
-[] Make watchlist items have a different bg when the auction isn't active any more
-[] Change minimum bid or price when auction is created first
-[] The bid logic in the auction site view is pretty weird
-    [] How do you go about creating logic in a different place but sending messages over to be displayed in the rendered form?
-[] fine tune error handling when auction is created
-[] having the bidding logic within the auction view is probably not best practice
-[] make it so the user that has created the auction must not bid
-[] handle letter overflow
+Final notes:
 
-[-] overlooking the url logic on the other pages
-[-] figure out if through that people can just insert stuff
- 
-Questions:
-[-] If people manage to add bids without the interface, the price of the piece will not get updated
-  [-] If people manage to add a bid under the current highest bid, the Bid.objects.all().last() will not give out the highest
+General:
+- I did not handle letter overflow
+- At some point I lost track of all the wrappers and padding and margins to keep everything in the same
+  style. I think I need some training with that but it's not worth the time investment for me now to 
+  redo everything. I think I can train that in future projects, too.
+- Website is not, yet responsive
 
+Category:
+- the categories are not ordered alphabetically nor is "No Category" at top which would make sense
+- it's only possible to bind one auction with one category at the moment
+- Category views extend the index view and just filter differently
+- the owner of the auction can change the category
+
+Index / Auctions overview / Category view:
+- Website is not centered, when flex items are reordering - I don't like it but i wanna do better next project
+
+Auction:
+- Auction site looks pretty bad, but I've spent so much site with the site that having the logic down is 
+  enough for me and I will design nice stuff later
+
+Bidding:
+- is having the bidding logic within the auction view fine or should I outsource it to a different view 
+  that is handling post requests and then coming back?
+- you cannot bid as the owner of the auction
+
+Watchlist:
+- active auction appear the same as inactive / finished auctions
+- watchlist.html could probably somehow extend index.html, but I couldn't figure what makes most sense
+
+Final thoughts:
+- I learned a lot and I did not know anything about designing a website when starting. That's why everything
+  is so messy - but that's why I don't wanna re-do every detail but move along and do that in the next projects.
+
+  ~~ I WOULD LOVE SOME FEEDBACK ~~
 """
 
 class NewAuctionForm(forms.Form):
@@ -38,7 +54,7 @@ class NewAuctionForm(forms.Form):
     starting_price = forms.IntegerField(label="", widget=forms.TextInput(attrs={'class':'form-input text', 'placeholder':'Starting Price'}))
     category = forms.ChoiceField(
         label="Choose Category",
-        choices=enumerate(list(Category.objects.all())),
+        choices= Category.objects.all().values_list('pk', 'name'),
         widget=forms.Select(attrs={'class':'form-input'})
         )
     picture_url = forms.CharField(
@@ -48,8 +64,8 @@ class NewAuctionForm(forms.Form):
 
 class NewBidForm(forms.Form):
     bid = forms.IntegerField(
-        label="Place your bid",
-        widget=forms.NumberInput(attrs={'class':'bid-input'})
+        label="",
+        widget=forms.NumberInput(attrs={'class':'form-input'})
         )
 
 
@@ -59,8 +75,10 @@ class NewCommentForm(forms.Form):
 
 def index(request):
     auctions = Auction.objects.filter(active=True)
+    categories = Category.objects.all()
     return render(request, "auctions/index.html", {
         "auctions": auctions,
+        "categories": categories,
         })
 
 
@@ -126,6 +144,7 @@ def auction(request, auction_id):
 
     auction = Auction.objects.get(pk=auction_id)
     any_bids = auction.bids.filter().exists()
+    categories = Category.objects.exclude(name=auction.category.name)
     message = ""
     error = ""
 
@@ -161,7 +180,8 @@ def auction(request, auction_id):
             "message": message,
             "error": error,
             "watchlist": watchlist,
-            "auction_in_watchlist": auction_in_watchlist
+            "auction_in_watchlist": auction_in_watchlist,
+            "categories": categories
         })
 
     return render(request, "auctions/auction.html",{
@@ -173,7 +193,8 @@ def auction(request, auction_id):
         "form_comment": NewCommentForm(),
         "user": request.user,
         "watchlist": watchlist,
-        "auction_in_watchlist": auction_in_watchlist
+        "auction_in_watchlist": auction_in_watchlist,
+        "categories": categories
     })
 
 
@@ -264,3 +285,32 @@ def submit_comment(request, auction_id):
             )
             new_comment.save()
     return HttpResponseRedirect(reverse('auction', args=[auction.pk]))
+
+def category(request):
+    category_chosen=request.GET['category_chosen']
+    auctions = Auction.objects.filter(active=True).filter(category = Category.objects.get(name=category_chosen))
+    categories = Category.objects.all()
+    return render(request, "auctions/index.html", {
+        "auctions": auctions,
+        "categories": categories,
+        "chosen_category": category_chosen
+        })
+
+def change_category(request):
+    if request.method=="POST":
+
+        category_name= request.POST['category_chosen']
+        auction_title= request.POST['auction']
+        
+        # return render(request, "auctions/test.html", {
+        #   "category_name": category_name,
+        #   "auction_title": auction_title  
+        # })
+
+        category = Category.objects.get(name=category_name)
+        auction = Auction.objects.get(pk=auction_title)
+
+        auction.category = category
+        auction.save()
+
+        return HttpResponseRedirect(reverse('auction', args=[auction.pk]))

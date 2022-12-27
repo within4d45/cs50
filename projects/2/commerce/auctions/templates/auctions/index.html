@@ -1,36 +1,43 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <hr>
-        <div class="wrapper auctions-wrapper">
-            <h2>Active Listings</h2>
-            {% for auction in auctions %}
-                <div class="hstack">
-                    <img class="auction-preview-image" src="{{ auction.picture_url }}">
-                    <div class="vstack">
-                        <a class="container-item title" href="{% url 'auction' auction.id %}">{{ auction }}</a>
-                        <div class="container-item description">Description: {{ auction.description| truncatechars:100 }}</div>
-                        <div class="container-item current_price">Current price: {{ auction.price }}$</div>
-                    </div>
-                </div>
-            {% empty %}
-            {% endfor %}
+
+    <div class="wrapper auctions-wrapper">
+
+        <h1>
+            Active Listings         
+            {% if chosen_category %}
+                in {{ chosen_category }}
+            {% endif %}
+        </h1>
+
+        <div class="category-form">
+            <form class="form selection" action="{% url 'category' %}"> 
+                <select class="form-input select" name="category_chosen">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <input class="form-input button" type="submit" value="Filter by Category">
+            </form>
         </div>
 
-        <div class="wrapper auctions-wrapper">
-            <h2>Active Listings</h2>
-
+        <div class="auctions">
             {% for auction in auctions %}
-                <a class="auctions" href="{% url 'auction' auction.pk %}">
+            <a class="auctions-link" href="{% url 'auction' auction.pk %}">
+                <div class="auctions-preview">
                     <div class="auctions-image">
                         <img src="{{ auction.picture_url }}">
                     </div>
                     <div class="auctions-info">
                         <div>{{ auction.title }}</div>
                     </div>
-                </a>
+                </div>
+            </a>
             {% empty %}
                 <h3>No active listings</h3>
             {% endfor %}
         </div>
+    </div>
+
 {% endblock %}

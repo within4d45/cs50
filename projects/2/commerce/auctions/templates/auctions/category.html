@@ -1,12 +1,1 @@
-{% extends "auctions/layout.html" %}
-
-{% block body %}
-    <h1>{{ category.name }}</h1>
-    <a>The category has the following auctions running:</a>
-    <ul>
-        {% for auction in auctions %}
-        <li> {{ auction }} </li> 
-        {% endfor %}
-    </ul>
-    
-{% endblock %}
+{% extends "auctions/index.html" %}

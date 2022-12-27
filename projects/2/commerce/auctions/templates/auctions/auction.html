@@ -18,6 +18,30 @@
             <div class="auction-image">
                 <img src="{{ auction.picture_url }}">
             </div>
+
+            <div class="info">
+                <div><b>Category:</b> {{ auction.category.name }}</div>
+                <div><b>By User:</b> {{ auction.user }}</div>
+            </div>   
+               
+
+
+
+            {% if user == auction.user and auction.active %}
+            <div class="category-form">
+                <form class="form selection" action="{% url 'change_category' %}" method="post"> 
+                    {% csrf_token %}
+                    <select class="form-input select" name="category_chosen">
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="hidden" name="auction" value="{{ auction.pk }}">
+                    <input class="form-input button" type="submit" value="Change Category">
+                </form>
+            </div>
+            {% endif %}
+            
         
             <div class="bids">
                 {% if auction.active %}
@@ -36,18 +60,18 @@
                     {% endif %}
 
                     <div><b>Current minimum bid: {{ auction.price }}$</b></div>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user != auction.user %}
                         <div class="place_bid">
-                            <form method="post">
+                            <form class="form bid-form" method="post">
                                 {% csrf_token %}
                                 {{ form_bid }}
-                                <input class="form-input button" type="submit" value="Submit">
+                                <input class="form-input button" type="submit" value="Place bid">
                             </form>
                         </div>
                     {% endif %}
 
                 {% else %}
-                    <div><b>Auction is over. The final price is {{ auction.price }}$</b></div>
+                    <div><b>Auction is over. The highest bid was {{ auction.price }}$</b></div>
                     {% if request.user == bids.last.user %}
                         <div class="winner">You have won the auction. Congratulations!</div>
                     {% endif %}
@@ -57,16 +81,16 @@
             </div>
         
             <div class="comments">
-                <h3>Comment section</h3>
-                {% for comment in comments %}
-                    <div class="comment">
+                <div class="comment">
+                    <h3>Comment section</h3>
+                    {% for comment in comments %}
                         <b>{{ comment.user }} commented:</b><br>
-                        {{ comment }}
-
-                        {% empty %}
+                        {{ comment }}<br><br>
+                    {% empty %}
                         <b>No comments, yet. Be the first one!</b>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
+  
             
                 {% if user.is_authenticated %}
                     <!-- Submit comment -->

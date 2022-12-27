@@ -11,16 +11,16 @@
         <div class="wrapper navbar-wrapper">
             <div class="navbar">
                 <ul class="navbar_section">
-                    <li><a class="link" href="{% url 'index' %}">Home</a></li>
+                    <li><a class="link navbar-link" href="{% url 'index' %}">Home</a></li>
                 </ul>
                 <ul class="navbar_section">
                     {% if user.is_authenticated %}
-                        <li><a class="link" href="{% url 'new_auction' %}">New Auction</a></li>
-                        <li><a class="link" href="{% url 'watchlist' %}">My Watchlist</a></li>
+                        <li><a class="link navbar-link" href="{% url 'new_auction' %}">New Auction</a></li>
+                        <li><a class="link navbar-link" href="{% url 'watchlist' %}">My Watchlist</a></li>
                         <li>Logged in as <strong> {{ user.username }}</strong> (<a class="link" href="{% url 'logout' %}">Log Out</a>)</li>
                     {% else %}
-                        <li><a class="link" href="{% url 'login' %}">Log In</a></li>
-                        <li><a class="link" href="{% url 'register' %}">Register</a></li>
+                        <li><a class="link navbar-link" href="{% url 'login' %}">Log In</a></li>
+                        <li><a class="link navbar-link" href="{% url 'register' %}">Register</a></li>
                     {% endif %}
                 </ul>
             </div>
