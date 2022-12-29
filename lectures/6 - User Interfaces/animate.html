@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Animate</title>
+    <style>
+
+        @keyframes grow {
+            from {
+                font-size: 20px;
+            }
+            to {
+                font-size: 100px;
+            }
+        }
+
+        @keyframes move {
+            0% {
+                left: 0%;
+            }
+            50% {
+                left: 50%;
+            }
+            100% {
+                left: 0%;
+            }
+        }
+
+    
+        #grow, #move {
+            animation-duration: 2s;
+            animation-fill-mode: forwards;
+        }
+
+        #grow {
+            animation-name: grow;
+        }
+
+        #move {
+            animation-name: move;
+            position: relative;
+            animation-iteration-count: infinite;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            const h1 = document.querySelector('#move');
+            h1.style.animationPlayState = 'paused';
+
+            document.querySelector('button').onclick = () => {
+                if (h1.style.animationPlayState === 'paused') {
+                    h1.style.animationPlayState = 'running';
+                } else {
+                    h1.style.animationPlayState = 'paused';
+                }
+            }
+        
+        });
+    </script>
+</head>
+<body>
+    <button>Moving Button</button>
+    <h1 id="move">Moving :o</h1>
+    <h1 id="grow">Growing :)</h1>
+</body>
+</html>

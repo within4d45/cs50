@@ -1,29 +1,27 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <div class="wrapper auctions-wrapper">
-        <h1>My Watchlist</h1>
-        {% if user.is_authenticated %}
-            <div class="auctions">
-                {% for auction in auctions %}
-                <a class="auctions-link" href="{% url 'auction' auction.pk %}">
-                    <div class="auctions-preview">
-                        <div class="auctions-image">
-                            <img src="{{ auction.picture_url }}">
-                        </div>
-                        <div class="auctions-info">
-                            <div>{{ auction.title }}</div>
-                        </div>
-                    </div>
-                </a>
+<div class="wrapper auctions-wrapper">
+
+    <h1>My watchlist</h1>
+    
+    <div class="auctions">
+        {% for auction in auctions %}
+        <a class="auctions-link" href="{% url 'auction' auction.pk %}">
+            <div class="auctions-preview">
+                <div class="auctions-image">
+                    <img src="{{ auction.picture_url }}">
+                </div>
+                <div class="auctions-info">
+                    <div>{{ auction.title }}</div>
+                </div>
             </div>
-            {% empty %}
-                <h3>No item on watchlist</h3>
-            {% endfor %}
-        {% else %}
-            <h2>Log in to see your watchlist</h2>
-        {% endif %}
+        </a>
+        {% empty %}
+            <h3>No active listings</h3>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
 
 
