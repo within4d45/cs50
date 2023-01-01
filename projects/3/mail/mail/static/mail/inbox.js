@@ -1,39 +1,38 @@
 /*
 To do:
-Create different views for inbox and outbox (doing that in the add email function by getting different parameters additionally)
+ReCreate different views for inbox and outbox (doing that in the add email function by getting different parameters additionally)
 [] Loading E-Mails after sending will miss the just sent e-mail
 [] init emails with unread
 */
 
 
 document.addEventListener('DOMContentLoaded', function () {
-
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  document.querySelector('#email').addEventListener('click', () => read_email(id));
   document.querySelector('#compose-form').addEventListener('submit', (event) => {
     send_email()
-      .then(load_mailbox('sent'));
+    .then(load_mailbox('sent'));
   });
-
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
-function read_email(id) {
-  document.querySelector('#email-view').style.display = 'none';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
+function read_email(contents) {
+    // Show the email and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#read-email').style.display = 'block';
+    document.querySelector('#compose-view').style.display = 'none';
+
+    document.querySelector('#read-email').innerHTML = `<div>From:</div>`;
 }
 
 function compose_email() {
-
   // Show compose view and hide other views
-  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#read-email').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -44,8 +43,8 @@ function compose_email() {
 
 function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
-  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#read-email').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -81,8 +80,7 @@ function add_email(contents) {
   email = document.createElement('div');
   email.className = 'email-view';
 
-  email.innerHTML = `<a
-                      <div class="info">
+  email.innerHTML = `<div class="info">
                       <div class="participants">
                         <div class="from"><b>From:</b> ${contents.sender}</div>
                         <div class="to"><b>To:</b> ${contents.recipients}</div>
@@ -90,7 +88,8 @@ function add_email(contents) {
                       <div class="timestamp"><b>Date:</b> ${contents.timestamp}</div>
                     </div>
                     <div class="subject">${contents.subject}</div>
-                    <div class="body">${contents.body.slice(0, 30)}</div>`;
+                    <div class="body">${contents.body.slice(0, 30)}</div>
+                    <button onclick="read_email(${contents.id})">Read Email<button>`;
 
   if (contents.read === true) {
     email.style.backgroundColor = "lightgrey";
