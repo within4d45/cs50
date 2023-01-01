@@ -1,3 +1,30 @@
 textarea {
     min-height: 400px;
 }
+
+.email-view {
+  display: flex;
+  flex-flow: column;
+  padding: 4px 12px;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.info {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.participants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.subject {
+  font-size: 14px;
+  font-weight: 600;
+}
