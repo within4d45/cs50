@@ -3,7 +3,8 @@ textarea {
 }
 
 
-.email-view {
+
+.email-preview {
   display: flex;
   flex-flow: column;
   padding: 4px 12px;
@@ -11,21 +12,27 @@ textarea {
   border: 1px solid black;
   border-radius: 4px;
   font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.info {
+.email-preview:hover {
+  transform: scale(1.02);
+}
+
+.email-preview .info {
   display:flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 
-.participants {
+.email-preview .participants {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.subject {
+.email-preview .subject {
   font-size: 14px;
   font-weight: 600;
 }
