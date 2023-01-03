@@ -168,12 +168,17 @@ function read_email(contents) {
   });
 
   document.querySelector('#reply').addEventListener('click', () => {
-    compose_email(
-      recipients=contents.sender, 
-      subject='Re: ' + contents.subject, 
-      body = 
-`\n\n"On ${contents.timestamp} ${contents.sender} wrote:
-${contents.body}"`)
-    });
- 
+    const recipient = contents.sender;
+    var subject = contents.subject;
+    const email_body = 
+      `\n\n"On ${contents.timestamp} ${contents.sender} wrote:\n`+
+      `${contents.body}"`;
+
+    // Checking if the incoming email was already a response, adding 'Re: ' if it wasn't
+    if (subject.slice(0,4) !== 'Re: ') {
+      subject = 'Re: ' + subject;
+    }
+
+    compose_email(recipients = recipient, subject = subject, body = email_body);
+  });
 }
