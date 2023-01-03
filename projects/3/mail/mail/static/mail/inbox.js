@@ -165,7 +165,7 @@ function read_email(contents) {
       })
     })
     .then( () => load_mailbox('inbox'))
-  })
+  });
 
-  
+  document.querySelector('#reply').addEventListener('click', compose_email);
 }
