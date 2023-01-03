@@ -90,13 +90,14 @@ function load_email(contents) {
 
   // set email as read
   if (!contents.read) {
-    fetch('/emails/' + email_id, {
+    fetch('/emails/' + contents.id, {
       method: 'PUT',
       body: JSON.stringify({
           read: true
       })
     })
   }
+
 }
 
 function add_email(contents) {
@@ -119,7 +120,7 @@ function add_email(contents) {
     email.style.backgroundColor = "lightgrey";
   }
 
-  /* Pass the id to be fetched in the next function */
+  /* Pass the content to be fetched in the next function */
   email.addEventListener('click', function() {
     load_email(contents);
   });
