@@ -4,6 +4,7 @@ ReCreate different views for inbox and outbox (doing that in the add email funct
 [] Loading E-Mails after sending will miss the just sent e-mail
 [] init emails with unread
 [] after sending: when object is message, do one, else redo email
+[] don't show archive and unarchive buttons to the sender of the email
 
 Questions:
 email-cards:
@@ -26,8 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // By default, load the inbox
   load_mailbox('inbox');
 });
-
-
 
 function compose_email() {
   // Show compose view and hide other views
@@ -75,7 +74,7 @@ function send_email() {
   .then(() => load_mailbox('sent'));
 }
 
-function load_email(email_id) {
+function load_email(contents) {
   // Show the email and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#read-email').style.display = 'block';
@@ -83,18 +82,21 @@ function load_email(email_id) {
 
   document.querySelector('#read-email').innerHTML = ``;
 
-  fetch('/emails/' + email_id)
+  fetch('/emails/' + contents.id)
   .then(response => response.json())
   .then(email => {
     read_email(email);
   })
 
-  fetch('/emails/' + email_id, {
-    method: 'PUT',
-    body: JSON.stringify({
-        read: true
+  // set email as read
+  if (!contents.read) {
+    fetch('/emails/' + email_id, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
     })
-  })
+  }
 }
 
 function add_email(contents) {
@@ -119,7 +121,7 @@ function add_email(contents) {
 
   /* Pass the id to be fetched in the next function */
   email.addEventListener('click', function() {
-    load_email(contents.id);
+    load_email(contents);
   });
 
   // Add email to DOM
@@ -164,4 +166,6 @@ function read_email(contents) {
     })
     .then( () => load_mailbox('inbox'))
   })
+
+  
 }
