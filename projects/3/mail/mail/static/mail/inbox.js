@@ -3,6 +3,7 @@ To do:
 ReCreate different views for inbox and outbox (doing that in the add email function by getting different parameters additionally)
 [] Loading E-Mails after sending will miss the just sent e-mail
 [] init emails with unread
+[] after sending: when object is message, do one, else redo email
 
 Questions:
 email-cards:
@@ -17,10 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
-  document.querySelector('#compose-form').addEventListener('submit', (event) => {
-    send_email()
-    .then(load_mailbox('sent'));
-  });
+  document.querySelector('#compose-form').onsubmit = () => {
+    send_email();
+    return false;
+  };
+
   // By default, load the inbox
   load_mailbox('inbox');
 });
@@ -65,8 +67,12 @@ function send_email() {
       body: document.querySelector('#compose-body').value
     })
   })
-
-  return false;
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+  })
+  .then(() => load_mailbox('sent'));
 }
 
 function load_email(email_id) {
@@ -86,7 +92,7 @@ function load_email(email_id) {
   fetch('/emails/' + email_id, {
     method: 'PUT',
     body: JSON.stringify({
-        read: false
+        read: true
     })
   })
 }
@@ -107,7 +113,7 @@ function add_email(contents) {
   <div class="body">${contents.body.slice(0, 30)}</div>`;
 
 
-  if (contents.read === false) {
+  if (contents.read === true) {
     email.style.backgroundColor = "lightgrey";
   }
 
