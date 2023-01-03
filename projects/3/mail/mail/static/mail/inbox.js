@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', () => compose_email(''));
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
   document.querySelector('#compose-form').onsubmit = () => {
     send_email();
     return false;
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
   load_mailbox('inbox');
 });
 
-function compose_email(recipients) {
+function compose_email(recipients = '', subject='', body='') {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#read-email').style.display = 'none';
@@ -36,8 +36,8 @@ function compose_email(recipients) {
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = recipients;
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = body;
 }
 
 function load_mailbox(mailbox) {
@@ -167,5 +167,13 @@ function read_email(contents) {
     .then( () => load_mailbox('inbox'))
   });
 
-  document.querySelector('#reply').addEventListener('click', () => compose_email(contents.sender));
+  document.querySelector('#reply').addEventListener('click', () => {
+    compose_email(
+      recipients=contents.sender, 
+      subject='Re: ' + contents.subject, 
+      body = 
+`\n\n"On ${contents.timestamp} ${contents.sender} wrote:
+${contents.body}"`)
+    });
+ 
 }
