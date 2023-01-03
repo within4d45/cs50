@@ -127,18 +127,41 @@ function add_email(contents) {
 }
 
 function read_email(contents) {
+  
+  var button;
+  if (contents.archived) {
+    button = `<button class="btn btn-sm btn-outline-primary" id="archive">Unarchive</button>`
+  } else {
+    button = `<button class="btn btn-sm btn-outline-primary" id="archive">Archive</button>`
+  }
+
   const email = document.createElement('div');
   email.className = 'email-content';
+
   email.innerHTML = `
   <div class="from"><b>From:</b> ${contents.sender}</div>
   <div class="to"><b>To:</b> ${contents.recipients}</div>
   <div class="subject"><b> Subject:</b>${contents.subject}</div>
   <div class="timestamp"><b>Timestamp:</b> ${contents.timestamp}</div>
-  <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+  <div id="email-options">
+    <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+    ${button}
+  </div>
   <hr>
   <div class="body">${contents.body}</div>`;
-
+  
+  // debugging help
   console.log(contents);
-
+  
   document.querySelector('#read-email').append(email);
+
+  document.querySelector('#archive').addEventListener('click', () => {
+    fetch('/emails/' + contents.id, {
+      method: 'PUT',
+      body: JSON.stringify({
+          archived: !contents.archived
+      })
+    })
+    .then( () => load_mailbox('inbox'))
+  })
 }
