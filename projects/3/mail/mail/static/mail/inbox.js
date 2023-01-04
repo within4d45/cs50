@@ -3,9 +3,9 @@ To do:
 ReCreate different views for inbox and outbox (doing that in the add email function by getting different parameters additionally)
 [x] Loading E-Mails after sending will miss the just sent e-mail
 [x] init emails with unread
-[] Error handling: 
-  [] after sending: when object is message, do one, else redo email (if the email-address exists, if it doesn't, then handle the error)
-  [] same with having no subject or address
+[x] Error handling: 
+  [x] after sending: when object is message, do one, else redo email (if the email-address exists, if it doesn't, then handle the error)
+  [x] same with having no subject or address
 [] fetching the user and do the following:
   [] don't show archive and unarchive buttons to the sender of the email
   [] don't show the reply button when the user is the one who has sent the email
@@ -57,7 +57,9 @@ function load_mailbox(mailbox) {
   fetch('/emails/' + mailbox)
     .then(response => response.json())
     .then(emails => {
-      emails.forEach(add_email);
+      emails.forEach(function(item) {
+        add_email(item, mailbox);
+      });
     })
 }
 
@@ -92,7 +94,7 @@ function send_email() {
   })
 }
 
-function load_email(contents) {
+function load_email(contents, mailbox) {
   // Show the email and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#read-email').style.display = 'block';
@@ -103,7 +105,7 @@ function load_email(contents) {
   fetch('/emails/' + contents.id)
   .then(response => response.json())
   .then(email => {
-    read_email(email);
+    read_email(email, mailbox);
   })
 
   // set email as read
@@ -118,7 +120,7 @@ function load_email(contents) {
 
 }
 
-function add_email(contents) {
+function add_email(contents, mailbox) {
   const email = document.createElement('a');
   email.className = 'email-preview';
 
@@ -139,14 +141,14 @@ function add_email(contents) {
 
   /* Pass the content to be fetched in the next function */
   email.addEventListener('click', function() {
-    load_email(contents);
+    load_email(contents, mailbox);
   });
 
   // Add email to DOM
   document.querySelector('#emails-view').append(email);
 }
 
-function read_email(contents) {
+function read_email(contents, mailbox) {
   
   var button;
   if (contents.archived) {
@@ -158,18 +160,22 @@ function read_email(contents) {
   const email = document.createElement('div');
   email.className = 'email-content';
 
-  email.innerHTML = `
-  <div class="from"><b>From:</b> ${contents.sender}</div>
-  <div class="to"><b>To:</b> ${contents.recipients}</div>
-  <div class="subject"><b> Subject:</b>${contents.subject}</div>
-  <div class="timestamp"><b>Timestamp:</b> ${contents.timestamp}</div>
-  <div id="email-options">
-    <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
-    ${button}
-  </div>
-  <hr>
-  <div class="body">${contents.body}</div>`;
-  
+  email.innerHTML = `<div class="from"><b>From:</b> ${contents.sender}</div>`;
+  email.innerHTML += `<div class="to"><b>To:</b> ${contents.recipients}</div>`;
+  email.innerHTML += `<div class="to"><b>To:</b> ${contents.recipients}</div>`;
+  email.innerHTML += `<div class="subject"><b> Subject:</b>${contents.subject}</div>`;
+  email.innerHTML += `<div class="timestamp"><b>Timestamp:</b> ${contents.timestamp}</div>`;
+
+  if (mailbox === 'inbox') {
+    email.innerHTML += `
+    <div id="email-options">
+      <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+      ${button}
+    </div>`
+  }
+
+  email.innerHTML += `<div class="body">${contents.body}</div>`;
+
   // debugging help
   console.log(contents);
   
