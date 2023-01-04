@@ -1,10 +1,13 @@
 /*
 To do:
 ReCreate different views for inbox and outbox (doing that in the add email function by getting different parameters additionally)
-[] Loading E-Mails after sending will miss the just sent e-mail
-[] init emails with unread
-[] after sending: when object is message, do one, else redo email
-[] don't show archive and unarchive buttons to the sender of the email
+[x] Loading E-Mails after sending will miss the just sent e-mail
+[x] init emails with unread
+[] Error handling: 
+  [] after sending: when object is message, do one, else redo email (if the email exists, if it doesn't, thengit p)
+[] fetching the user and do the following:
+  [] don't show archive and unarchive buttons to the sender of the email
+  [] don't show the reply button when the user is the one who has sent the email
 
 Questions:
 email-cards:
