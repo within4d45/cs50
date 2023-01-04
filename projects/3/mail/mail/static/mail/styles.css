@@ -2,7 +2,9 @@ textarea {
     min-height: 400px;
 }
 
+.error-message {
 
+}
 
 .email-preview {
   display: flex;
@@ -36,3 +38,4 @@ textarea {
   font-size: 14px;
   font-weight: 600;
 }
+

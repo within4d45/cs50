@@ -62,6 +62,8 @@ function load_mailbox(mailbox) {
 }
 
 function send_email() {
+
+  // Add "No Subject" when somebody has not entered any subject
   var subject = document.querySelector('#compose-subject').value;
   if (subject === '') {
     subject = 'No Subject';
@@ -77,10 +79,17 @@ function send_email() {
   })
   .then(response => response.json())
   .then(result => {
-      // Print result
-      console.log(result);
+    // If the message has not been sent properly, give the user
+    // the ability to revisit the E-Mail and fix the mistake
+    if (typeof(result.error) !== "undefined") {
+      element= document.querySelector('.message');
+      // display the message as an alert via bootstrap api
+      element.className = 'alert alert-danger message';
+      element.innerHTML = result.error;
+    } else {
+      load_mailbox('sent');
+    }
   })
-  .then(() => load_mailbox('sent'));
 }
 
 function load_email(contents) {
@@ -121,8 +130,7 @@ function add_email(contents) {
     </div>
     <div class="timestamp"><b>Date:</b> ${contents.timestamp}</div>
   </div>
-  <div class="subject">${contents.subject}</div>
-  <div class="body">${contents.body.slice(0, 30)}</div>`;
+  <div class="subject">${contents.subject}</div>`;
 
 
   if (contents.read === true) {
