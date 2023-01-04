@@ -4,7 +4,8 @@ ReCreate different views for inbox and outbox (doing that in the add email funct
 [x] Loading E-Mails after sending will miss the just sent e-mail
 [x] init emails with unread
 [] Error handling: 
-  [] after sending: when object is message, do one, else redo email (if the email exists, if it doesn't, thengit p)
+  [] after sending: when object is message, do one, else redo email (if the email-address exists, if it doesn't, then handle the error)
+  [] same with having no subject or address
 [] fetching the user and do the following:
   [] don't show archive and unarchive buttons to the sender of the email
   [] don't show the reply button when the user is the one who has sent the email
@@ -61,11 +62,16 @@ function load_mailbox(mailbox) {
 }
 
 function send_email() {
+  var subject = document.querySelector('#compose-subject').value;
+  if (subject === '') {
+    subject = 'No Subject';
+  }
+
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
       recipients: document.querySelector('#compose-recipients').value,
-      subject: document.querySelector('#compose-subject').value,
+      subject: subject,
       body: document.querySelector('#compose-body').value
     })
   })
