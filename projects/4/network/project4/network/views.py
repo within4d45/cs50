@@ -16,7 +16,7 @@ def index(request):
         new_post.save()
         return HttpResponseRedirect(reverse(index))
 
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by("-timestamp")
     return render(request, "network/index.html", {
         "posts": posts
     })

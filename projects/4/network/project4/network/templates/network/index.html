@@ -1,18 +1,33 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <div class="create-post">
-        <form action="{% url 'index' %}" class="create-post" method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <textarea name="content" class="form-control" id="new-post" cols="30" rows="5" required></textarea>
+
+    {% if user.is_authenticated %}
+    <div class="wrapper create-post-wrapper">
+        <div class="create-post">
+            <form action="{% url 'index' %}" class="create-post" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea name="content" class="form-control" id="new-post" cols="30" rows="5" required></textarea>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Create Post">
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="wrapper post-wrapper">
+        {% for post in posts %}
+        <div class="post">
+            <div class="user"><strong><a href="#">{{ post.user }}</a></strong></div>
+            <div class="timestamp"><strong>{{ post.timestamp}}</strong></div>
+            <div class="content">{{ post.content }}</div>
+            <div class="wrapper like-wrapper">
+                <button type="button" class="btn btn-danger ">&#9829;</button>
+                <div class="like-count">{{ post.likes }}</div>
             </div>
-            <input type="submit" class="btn btn-primary" value="Create Post">
-        </form>
+        </div>
+        {% endfor %}
     </div>
-    {% for post in posts %}
-    <div class="post">
-        {{ post.content }}
-    </div>
-    {% endfor %}
+
 {% endblock %}

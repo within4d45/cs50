@@ -7,6 +7,6 @@ class User(AbstractUser):
 
 class Post(models.Model):
     content = models.CharField(max_length=1028)
-    timestamp = models.TimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     likes = models.IntegerField(default = 0)
