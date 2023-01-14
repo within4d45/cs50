@@ -7,6 +7,12 @@ from django.urls import reverse
 from .models import User, Post
 
 
+"""
+To do:
+[] Catch case if requested profile user does not exist
+"""
+
+
 def index(request):
     if request.method == "POST":
         new_post = Post(
@@ -73,7 +79,19 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-def profile(request, user):
+def profile(request, username):
+    # we do not have to catch an exception, because the user only gets to this page if
+    # they click on a link
+    user = User.objects.get(username = username)
+    posts = Post.objects.filter(user = user.pk).order_by("-timestamp")
+    follower_count = user.followers.count()
+    following = False
+    if user in request.user.followers.all():
+        following = True
+    
     return render(request, "network/profile.html", {
-        "user": user,
+        "username": username,
+        "follower_count":follower_count,
+        "posts": posts,
+        "following": following,
     })

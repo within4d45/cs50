@@ -1,20 +1,19 @@
 {% extends "network/layout.html" %}
 
-{% block body %}
+{% load static %}
 
-{% if user.is_authenticated %}
-<div class="wrapper create-post-wrapper">
-    <div class="create-post">
-        <form action="{% url 'index' %}" class="create-post" method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <textarea name="content" class="form-control" id="new-post" cols="30" rows="5" required></textarea>
-            </div>
-            <input type="submit" class="btn btn-primary" value="Create Post">
-        </form>
+{% block body %}
+<div class="wrapper profile-wrapper">
+    <div class="profile">
+        <h1>{{ username }}'s Profile</h1>
+        <div class="followers">Followers: {{ follower_count }}</div>
+        {% if request.user.username != username %}
+        <div class="follow">
+            <input type="button" class="btn btn-primary follow-btn" {% if not following %} value="Follow" {% else %} value = "Unfollow" {% endif %}>
+        </div>
+        {% endif %}
     </div>
 </div>
-{% endif %}
 
 <div class="wrapper posts-wrapper">
     {% for post in posts %}
@@ -29,5 +28,4 @@
     </div>
     {% endfor %}
 </div>
-
 {% endblock %}
