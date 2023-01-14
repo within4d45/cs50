@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -10,6 +10,7 @@ from .models import User, Post
 """
 To do:
 [] Catch case if requested profile user does not exist
+[] Catch case the followed user doesn't exist
 """
 
 
@@ -79,19 +80,35 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-def profile(request, username):
+def profile(request, user_id):
     # we do not have to catch an exception, because the user only gets to this page if
     # they click on a link
-    user = User.objects.get(username = username)
-    posts = Post.objects.filter(user = user.pk).order_by("-timestamp")
-    follower_count = user.followers.count()
-    following = False
-    if user in request.user.followers.all():
-        following = True
+    variables = {}
+    user = User.objects.get(pk = user_id)
+    variables["profile_user"] = user
+    variables["posts"] = Post.objects.filter(user = user.pk).order_by("-timestamp")
+    variables["follower_count"] = user.followers.count()
     
-    return render(request, "network/profile.html", {
-        "username": username,
-        "follower_count":follower_count,
-        "posts": posts,
-        "following": following,
-    })
+    if request.user.is_authenticated:
+        following = False
+        if user in request.user.followers.all():
+            following = True
+     
+    variables["following"] = following
+    
+    return render(request, "network/profile.html", variables)
+
+def follow(request, user_id):
+    user = request.user
+    user_followed = User.objects.get(pk = user_id)
+    message = ""
+    
+    if user_followed in user.following.all():
+        user.following.remove(user_followed)
+        message = "Succesfully unfollowed"
+    else:
+        user.following.add(user_followed)
+        message = "Succesfully followed"
+    
+    return JsonResponse({'status': message})
+    
