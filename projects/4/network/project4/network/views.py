@@ -91,11 +91,10 @@ def profile(request, user_id):
     
     if request.user.is_authenticated:
         following = False
-        if user in request.user.followers.all():
+        if user in request.user.following.all():
             following = True
-     
-    variables["following"] = following
-    
+        variables["following"] = following
+
     return render(request, "network/profile.html", variables)
 
 def follow(request, user_id):
@@ -105,10 +104,10 @@ def follow(request, user_id):
     
     if user_followed in user.following.all():
         user.following.remove(user_followed)
-        message = "Succesfully unfollowed"
+        message = 'Succesfully unfollowed'
     else:
         user.following.add(user_followed)
-        message = "Succesfully followed"
+        message = 'Succesfully followed'
     
     return JsonResponse({'status': message})
     

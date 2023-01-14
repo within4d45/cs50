@@ -3,31 +3,35 @@
 {% load static %}
 
 {% block body %}
-<div class="wrapper profile-wrapper">
-    <div class="profile">
-        <h1>{{ profile_user }}'s Profile</h1>
-        <div class="followers">Followers: {{ follower_count }}</div>
-        {% if request.user != profile_user and user.is_authenticated %}
-        <div class="follow">
-            <button class="btn btn-primary" id="follow-button" data-user-id = "{{ profile_user.id }}">
-                {% if not following %} Follow {% else %} Unfollow {% endif %}
-            </button>
+    <div class="wrapper profile-wrapper">
+        <div class="profile">
+            <h1>{{ profile_user }}'s Profile, user id: {{profile_user.id}}</h1>
+            <div class="followers">Followers: {{ follower_count }}</div>
+            {% if request.user != profile_user and user.is_authenticated %}
+            <div class="follow">
+                <button class="btn btn-primary" id="follow-button" data-user-id="{{ profile_user.id }}">
+                    {% if not following %} Follow {% else %} Unfollow {% endif %}
+                </button>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
-</div>
 
-<div class="wrapper posts-wrapper">
-    {% for post in posts %}
-    <div class="post">
-        <div class="user"><strong><a href="{% url 'profile' post.user.id %}">{{ post.user }}</a></strong></div>
-        <div class="timestamp"><strong>{{ post.timestamp}}</strong></div>
-        <div class="content">{{ post.content }}</div>
-        <div class="wrapper like-wrapper">
-            <button type="button" class="btn btn-danger ">&#9829;</button>
-            <div class="like-count">{{ post.likes }}</div>
+    <div class="wrapper posts-wrapper">
+        {% for post in posts %}
+        <div class="post">
+            <div class="user"><strong><a href="{% url 'profile' post.user.id %}">{{ post.user }}</a></strong></div>
+            <div class="timestamp"><strong>{{ post.timestamp}}</strong></div>
+            <div class="content">{{ post.content }}</div>
+            <div class="wrapper like-wrapper">
+                <button type="button" class="btn btn-danger ">&#9829;</button>
+                <div class="like-count">{{ post.likes }}</div>
+            </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+
+    {% block script %}
+        <script src="{% static 'network/profile.js' %}"></script>
+    {% endblock %}
 {% endblock %}
