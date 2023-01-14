@@ -7,6 +7,17 @@ from django.core import serializers
 
 from .models import User, Post
 
+<<<<<<< HEAD
+=======
+
+"""
+To do:
+[] Catch case if requested profile user does not exist
+[] Catch case the followed user doesn't exist
+"""
+
+
+>>>>>>> 4f1919dbe50e48794f8d2a6fd282f0e4b32672c4
 def index(request):
     if request.method == "POST":
         new_post = Post(
@@ -81,3 +92,35 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def profile(request, user_id):
+    # we do not have to catch an exception, because the user only gets to this page if
+    # they click on a link
+    variables = {}
+    user = User.objects.get(pk = user_id)
+    variables["profile_user"] = user
+    variables["posts"] = Post.objects.filter(user = user.pk).order_by("-timestamp")
+    variables["follower_count"] = user.followers.count()
+    
+    if request.user.is_authenticated:
+        following = False
+        if user in request.user.following.all():
+            following = True
+        variables["following"] = following
+
+    return render(request, "network/profile.html", variables)
+
+def follow(request, user_id):
+    user = request.user
+    user_followed = User.objects.get(pk = user_id)
+    message = ""
+    
+    if user_followed in user.following.all():
+        user.following.remove(user_followed)
+        message = 'Succesfully unfollowed'
+    else:
+        user.following.add(user_followed)
+        message = 'Succesfully followed'
+    
+    return JsonResponse({'status': message})
+    
