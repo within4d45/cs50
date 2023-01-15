@@ -1,18 +1,23 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block body %}
+
+{% if heading %}
+    <h1>{{ heading }}</h1>
+{% endif %}
+
 {% if user.is_authenticated %}
-<div class="wrapper create-post-wrapper">
-    <div class="create-post">
-        <form action="{% url 'index' %}" class="create-post" method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <textarea name="content" class="form-control" id="new-post" cols="30" rows="5" required></textarea>
-            </div>
-            <input type="submit" class="btn btn-primary" value="Create Post">
-        </form>
+    <div class="wrapper create-post-wrapper">
+        <div class="create-post">
+            <form action="{% url 'index' %}" class="create-post" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea name="content" class="form-control" id="new-post" cols="30" rows="5" required></textarea>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Create Post">
+            </form>
+        </div>
     </div>
-</div>
 {% endif %}
 
 <div class="wrapper posts-wrapper">

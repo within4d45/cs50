@@ -36,9 +36,6 @@ def posts(request):
         "data": data
     })
 
-    
-
-
 def login_view(request):
     if request.method == "POST":
 
@@ -122,3 +119,13 @@ def follow(request, user_id, followed):
         else:
             request.user.following.remove(user_id)
         return HttpResponseRedirect(reverse("profile", args=[user_id]))
+    
+def followed(request):
+    if not request.user.is_authenticated:
+        return render(request, "network/error_not_signed_in.html")
+    users = request.user.following.all()
+    posts = Post.objects.filter(user__in=users).order_by("-timestamp")
+    return render(request, "network/index.html", {
+        "heading": "These post are only posts of people that you are following",
+        "posts": posts
+    })
