@@ -1,3 +1,4 @@
+import math
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -6,6 +7,7 @@ from django.urls import reverse
 from django.core import serializers
 
 from .models import User, Post
+from . import util
 
 
 """
@@ -13,7 +15,7 @@ To do:
 [] Catch case if requested profile user does not exist
 [] Catch case the followed user doesn't exist
 """
-
+POSTS_PER_PAGE = 10
 
 def index(request):
     if request.method == "POST":
@@ -24,16 +26,15 @@ def index(request):
         new_post.save()
         return HttpResponseRedirect(reverse(index))
 
-    posts = Post.objects.all().order_by("-timestamp")
+    post_list = Post.objects.all().order_by("-timestamp")
+    amount_pages = int(math.ceil(len(post_list)/POSTS_PER_PAGE))
+    
+    # add paginator
+    posts = util.paginate(request, post_list, POSTS_PER_PAGE)
+    
     return render(request, "network/index.html", {
-        "posts": posts
-    })
-
-def posts(request):
-    posts = request.user.posts.all()
-    data = serializers.serialize("json", posts)
-    return JsonResponse({
-        "data": data
+        "posts": posts,
+        "amount_pages": amount_pages,
     })
 
 def login_view(request):
@@ -55,11 +56,9 @@ def login_view(request):
     else:
         return render(request, "network/login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
@@ -95,9 +94,12 @@ def profile(request, user_id):
     variables = {}
     user = User.objects.get(pk = user_id)
     variables["profile_user"] = user
-    variables["posts"] = Post.objects.filter(user = user.pk).order_by("-timestamp")
     variables["follower_count"] = user.followers.count()
     
+    # Paginate our posts
+    post_list = Post.objects.filter(user = user.pk).order_by("-timestamp")
+    variables["posts"] = util.paginate(request, post_list, POSTS_PER_PAGE)
+
     # Check if user is authenticated
     if request.user.is_authenticated:
         # give the option to follow or unfollow, pass these values to the view
@@ -124,8 +126,15 @@ def followed(request):
     if not request.user.is_authenticated:
         return render(request, "network/error_not_signed_in.html")
     users = request.user.following.all()
-    posts = Post.objects.filter(user__in=users).order_by("-timestamp")
+    post_list = Post.objects.filter(user__in=users).order_by("-timestamp")
+    
+    # Calculate the amount of pages there are
+    amount_pages = int(math.ceil(len(post_list/POSTS_PER_PAGE)))
+    # Pagination
+    posts = util.paginate(request, post_list, POSTS_PER_PAGE)
+
     return render(request, "network/index.html", {
         "heading": "These post are only posts of people that you are following",
-        "posts": posts
+        "posts": posts,
+        "amount_pages": amount_pages
     })
