@@ -5,14 +5,13 @@
 {% block body %}
     <div class="wrapper profile-wrapper">
         <div class="profile">
-            <h1>{{ profile_user }}'s Profile, user id: {{profile_user.id}}</h1>
+            <h1>{{ profile_user }}'s Profile</h1>
             <div class="followers">Followers: {{ follower_count }}</div>
             {% if request.user != profile_user and user.is_authenticated %}
-            <div class="follow">
-                <button class="btn btn-primary" id="follow-button" data-user-id="{{ profile_user.id }}">
-                    {% if not following %} Follow {% else %} Unfollow {% endif %}
-                </button>
-            </div>
+                <form action="{% url 'follow' profile_user.id followed %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" value="{{ follow_button_value }}">
+                </form>
             {% endif %}
         </div>
     </div>
@@ -30,8 +29,4 @@
         </div>
         {% endfor %}
     </div>
-
-    {% block script %}
-        <script src="{% static 'network/profile.js' %}"></script>
-    {% endblock %}
 {% endblock %}

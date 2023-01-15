@@ -7,8 +7,6 @@ from django.core import serializers
 
 from .models import User, Post
 
-<<<<<<< HEAD
-=======
 
 """
 To do:
@@ -17,7 +15,6 @@ To do:
 """
 
 
->>>>>>> 4f1919dbe50e48794f8d2a6fd282f0e4b32672c4
 def index(request):
     if request.method == "POST":
         new_post = Post(
@@ -96,31 +93,32 @@ def register(request):
 def profile(request, user_id):
     # we do not have to catch an exception, because the user only gets to this page if
     # they click on a link
+    
+    # create a dict with the passed variables
     variables = {}
     user = User.objects.get(pk = user_id)
     variables["profile_user"] = user
     variables["posts"] = Post.objects.filter(user = user.pk).order_by("-timestamp")
     variables["follower_count"] = user.followers.count()
     
+    # Check if user is authenticated
     if request.user.is_authenticated:
-        following = False
+        # give the option to follow or unfollow, pass these values to the view
+        # and then use that information in the follow() post function
+        follow_button_value = "Follow"
+        followed = 0
         if user in request.user.following.all():
-            following = True
-        variables["following"] = following
+            follow_button_value = "Unfollow"
+            followed = 1
+        variables["follow_button_value"] = follow_button_value
+        variables["followed"] = followed
 
     return render(request, "network/profile.html", variables)
 
-def follow(request, user_id):
-    user = request.user
-    user_followed = User.objects.get(pk = user_id)
-    message = ""
-    
-    if user_followed in user.following.all():
-        user.following.remove(user_followed)
-        message = 'Succesfully unfollowed'
-    else:
-        user.following.add(user_followed)
-        message = 'Succesfully followed'
-    
-    return JsonResponse({'status': message})
-    
+def follow(request, user_id, followed):
+    if request.method == "POST":
+        if followed == 0:
+            request.user.following.add(user_id)
+        else:
+            request.user.following.remove(user_id)
+        return HttpResponseRedirect(reverse("profile", args=[user_id]))
