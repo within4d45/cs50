@@ -22,14 +22,20 @@
 
 <div class="wrapper posts-wrapper">
     {% for post in posts %}
-        <div class="post">
+        <div class="post" id="post-{{ post.id }}">
+            <h1>{{ post.id }}</h1>
             <div class="user"><strong><a href="{% url 'profile' post.user.id %}">{{ post.user }}</a></strong></div>
             <div class="timestamp"><strong>{{ post.timestamp}}</strong></div>
             <div class="content">{{ post.content }}</div>
             <div class="wrapper like-wrapper">
-                <button type="button" class="btn btn-danger ">&#9829;</button>
+                <button type="button" class="btn btn-danger">&#9829;</button>
                 <div class="like-count">{{ post.likes }}</div>
             </div>
+            {% if request.user == post.user %}
+                <button class="btn btn-primary edit-button" data-post-id="{{ post.id }}">Edit Post</button>
+            {% endif %}
+        </div>
+        <div class="edit-post" id="edit-post-{{ post.id }}">
         </div>
     {% endfor %}
 
@@ -62,7 +68,9 @@
             </li>
         </ul>
     </nav>
-
-    </div>
 </div>
+{% block script %}
+    <script src="{% static 'network/script.js' %}"></script>
 {% endblock %}
+{% endblock %}
+
